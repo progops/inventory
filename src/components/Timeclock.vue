@@ -1,9 +1,11 @@
 <template>
-  <form @submit.prevent="validateBeforeSubmit" >
+  <form @submit.prevent="validateBeforeSubmit">
+    <google-script />
     <h1>Prog Ops clock in/out</h1>
 
     <p>
       <label :class="{'has-error': errors.has('staffbadge') }"  for="staffbadge">ProgOps Staff Badge</label>
+      <br/>
       <input name="staffbadge" type="text" v-model="staffbadge" v-validate="'required'">
     </p>
 
@@ -38,7 +40,7 @@
     </p>
 
     <p>
-      <input type="submit" value="Submit">
+      <input type="submit" value="Submit" v-on:click="dostuff">
     </p>
 
     <p><pre>data: {{$data}}</pre></p>
@@ -46,8 +48,13 @@
 </template>
 
 <script>
+import Google from './Google.vue'
 export default {
-  name: 'form',
+  name: 'timeclock',
+  components: {
+    'google-script': Google
+  },
+  created () {},
   data () {
     return {
       staffbadge: null,
@@ -74,6 +81,11 @@ export default {
       if (!this.errors.any()) {
         this.submitForm()
       }
+    },
+    dostuff () {
+      this.$getGapiClient().then(gapi => {
+        console.log(gapi)
+      })
     }
   }
 }

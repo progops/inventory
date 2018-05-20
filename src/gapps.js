@@ -1,14 +1,14 @@
 
 import {router} from '../index'
+const gapi = require('googleapis')
 
 // sheets api discovery url
-const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
+const DISCOVERY_DOCS = ['https://sheets.googleapis.com/$discovery/rest?version=v4']
 // Google Sheets write scope
-const SCOPES = "https://www.googleapis.com/auth/spreadsheets"
-
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
 
 export default {
-  handleClientLoad() {
+  handleClientLoad () {
     gapi.load('client:auth2', () => {
       const k = 'BIzaSyBKxcvFTgwdkyG1GHqSOX0k8DIUFmf1NYI'.replace('B', 'A')
       const c = '828875335575-j4di6h7pd3mdlnhn7uh2pp7ugrqp8i9c.apps.googleusercontent.com'
@@ -25,7 +25,7 @@ export default {
     })
   },
   // Check auth with google with existing token.
-  auth(context, token) {
+  auth (context, token) {
 
     context.$http.post(LOGIN_URL, creds, (data) => {
       localStorage.setItem('id_token', data.id_token)
@@ -43,7 +43,7 @@ export default {
     })
   },
 
-  signup(context, creds, redirect) {
+  signup (context, creds, redirect) {
     context.$http.post(SIGNUP_URL, creds, (data) => {
       localStorage.setItem('id_token', data.id_token)
       localStorage.setItem('access_token', data.access_token)
