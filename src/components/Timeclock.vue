@@ -1,12 +1,15 @@
 <template>
   <form @submit.prevent="validateBeforeSubmit">
-    <google-script />
+    <google-script ref="googlevue" />
     <h1>Prog Ops clock in/out</h1>
 
     <p>
-      <label :class="{'has-error': errors.has('staffbadge') }"  for="staffbadge">ProgOps Staff Badge</label>
+      <label :class="{'has-error': errors.has('staffbadge') }" for="staffbadge">
+        ProgOps Staff Badge
+      </label>
       <br/>
-      <input name="staffbadge" type="text" v-model="staffbadge" v-validate="'required'">
+      <input name="staffbadge" type="text"
+        v-model="staffbadge" v-validate="'required'">
     </p>
 
     <p>
@@ -40,7 +43,16 @@
     </p>
 
     <p>
-      <input type="submit" value="Submit" v-on:click="dostuff">
+      <label :class="{'has-error': errors.has('name') }" for="name">
+        Your Name
+      </label>
+      <br/>
+      <input name="name" type="text"
+        v-model="name" v-validate="'required'">
+    </p>
+
+    <p>
+      <input type="submit" value="Submit">
     </p>
 
     <p><pre>data: {{$data}}</pre></p>
@@ -54,10 +66,17 @@ export default {
   components: {
     'google-script': Google
   },
-  created () {},
+  created () {
+    window.vvm2 = this
+  },
+  mounted () {
+    document.querySelectorAll('input[name="staffbadge"]')
+      .forEach((input) => input.addEventListener('blur', (e) => this.onStaffBadgeEntered(e)))
+  },
   data () {
     return {
       staffbadge: null,
+      name: null,
       position: null,
       inOrOut: null,
       positions: [
@@ -69,10 +88,7 @@ export default {
         {name: 'Toad Golf', value: 'golf'},
         {name: 'Shift Lead', value: 'shiftlead'},
         {other: true}
-      ],
-      equipment: [ {} ],
-      condition: null,
-      otherCondition: null
+      ]
     }
   },
   methods: {
@@ -82,10 +98,22 @@ export default {
         this.submitForm()
       }
     },
-    dostuff () {
-      this.$getGapiClient().then(gapi => {
-        console.log(gapi)
-      })
+    onStaffBadgeEntered (e) {
+      this.$refs.googlevue.lookupStaff(e.target.value)
+        .then((staff) => this.onStaffFound(staff.name))
+    },
+    onStaffFound (name) {
+      console.log(`name=${name}`)
+      var nametag = document.querySelectorAll('input[name="name"]')
+      if (name && nametag) {
+        nametag[0].value = name
+      }
+    },
+    submitForm () {
+      console.log('addToSheet')
+      var d = this.$data
+      console.log(d)
+      this.$refs.googlevue.addToSheet(d.staffbadge, d.name, d.inOrOut)
     }
   }
 }
