@@ -9,7 +9,7 @@ Vue.config.productionTip = false
 Vue.use(VeeValidate)
 
 /* eslint-disable no-new */
-new Vue({
+window.vvm = new Vue({
   el: '#app',
   router,
   template: '<App/>',
